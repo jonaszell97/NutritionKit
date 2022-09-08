@@ -1,6 +1,6 @@
-public struct NutritionKit {
-    public private(set) var text = "Hello, World!"
 
-    public init() {
-    }
+import AppUtilities
+
+extension Log {
+    static let nutritionKit = Logger(subsystem: "com.jonaszell.NutritionKit", category: "NutritionKit")
 }
