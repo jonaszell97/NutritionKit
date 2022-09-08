@@ -4,7 +4,7 @@ import AVFoundation
 import Combine
 import SwiftUI
 
-public struct Barcode {
+public struct Barcode: Codable, Hashable {
     /// The barcode data.
     let data: String
     
@@ -30,7 +30,7 @@ public struct BarcodeScannerView: View {
         bottomRight: CGPoint(x: 0.85, y: 0.4)
     )
     
-    init(barcodeData: Binding<Barcode?>) {
+    public init(barcodeData: Binding<Barcode?>) {
         self._barcodeData = barcodeData
         self.rectangleCutoutTopLeft = Self.defaultBarcodeCutoutRect.topLeft
         self.rectangleCutoutTopRight = Self.defaultBarcodeCutoutRect.topRight
