@@ -114,10 +114,10 @@ internal struct AnyCameraView<Content: View>: View {
     }
     
     var readyView: some View {
-        ZStack {
-            CameraLiveView(controller: self.controller)
-            self.cameraViewOverlay
-        }
+        CameraLiveView(controller: self.controller)
+            .overlay {
+                self.cameraViewOverlay
+            }
     }
     
     var body: some View {
