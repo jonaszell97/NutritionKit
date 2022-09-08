@@ -1,7 +1,7 @@
 
 import SwiftUI
 
-struct USNutritionLabelView: View {
+public struct USNutritionLabelView: View {
     /// The nutrition label to display.
     let label: NutritionLabel
     
@@ -60,7 +60,7 @@ struct USNutritionLabelView: View {
         .chromium
     ]
     
-    init(label: NutritionLabel, language: LabelLanguage? = nil) {
+    public init(label: NutritionLabel, language: LabelLanguage? = nil) {
         self.label = label
         self.language = language ?? label.language
     }
@@ -206,7 +206,7 @@ struct USNutritionLabelView: View {
         }
     }
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             Rectangle()
                 .stroke(Color.black, lineWidth: 3)

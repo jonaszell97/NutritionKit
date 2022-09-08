@@ -1,7 +1,7 @@
 
 import Foundation
 
-struct NutritionLabel {
+public struct NutritionLabel {
     /// The language of the label.
     let language: LabelLanguage
     
@@ -12,7 +12,7 @@ struct NutritionLabel {
     var nutritionFacts: [NutritionItem: NutritionAmount]
 }
 
-enum KnownLabel: String, CaseIterable {
+public enum KnownLabel: String, CaseIterable {
     /// The nutriition facts headline.
     case nutritionFacts
     
@@ -28,7 +28,7 @@ enum KnownLabel: String, CaseIterable {
 
 // MARK: Utility extensions
 
-extension NutritionLabel {
+public extension NutritionLabel {
     /// Whether or not this label contains enough data to be considered valid.
     var isValid: Bool {
         var score = 0
@@ -49,14 +49,14 @@ extension NutritionLabel: Codable {
         case language, servingSize, nutritionFacts
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(language, forKey: .language)
         try container.encode(servingSize, forKey: .servingSize)
         try container.encode(nutritionFacts, forKey: .nutritionFacts)
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.init(
             language: try container.decode(LabelLanguage.self, forKey: .language),
@@ -67,7 +67,7 @@ extension NutritionLabel: Codable {
 }
 
 extension NutritionLabel: Equatable {
-    static func ==(lhs: Self, rhs: Self) -> Bool {
+    public static func ==(lhs: Self, rhs: Self) -> Bool {
         return (
             lhs.language == rhs.language
             && lhs.servingSize == rhs.servingSize
@@ -77,7 +77,7 @@ extension NutritionLabel: Equatable {
 }
 
 extension NutritionLabel: Hashable {
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(language)
         hasher.combine(servingSize)
         hasher.combine(nutritionFacts)

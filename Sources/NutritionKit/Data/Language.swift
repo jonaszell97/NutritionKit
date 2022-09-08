@@ -1,22 +1,22 @@
 
 import Foundation
 
-enum LabelLanguage: String, Codable, Hashable {
+public enum LabelLanguage: String, Codable, Hashable {
     case english, german
 }
 
 extension NutritionItem: CustomStringConvertible {
     /// The localized name of this label.
-    var localizedName: String {
+    public var localizedName: String {
         NSLocalizedString("nutrient.\(self.rawValue)", comment: "")
     }
     
-    var description: String {
+    public var description: String {
         localizedName
     }
     
     /// The known textual representations for this item in the English language.
-    static let knownLabelsEnglish: [NutritionItem: Set<String>] = [
+    public static let knownLabelsEnglish: [NutritionItem: Set<String>] = [
         .calories: ["total calories", "calories", "total cal.", "cal."],
         .caloriesFromFat: ["calories from fat"],
         .fat: ["total fat", "fat"],
@@ -63,7 +63,7 @@ extension NutritionItem: CustomStringConvertible {
     ]
     
     /// The known textual representations for this item in the german language.
-    static let knownLabelsGerman: [NutritionItem: Set<String>] = [
+    public static let knownLabelsGerman: [NutritionItem: Set<String>] = [
         .calories: ["energie", "brennwert", "kalorien"],
         .fat: ["fett"],
         .saturatedFat: ["davon gesättigte fettsäuren", "davon ges. fettsäuren", "gesättigte fettsäuren", "ges. fettsäuren"],
@@ -109,7 +109,7 @@ extension NutritionItem: CustomStringConvertible {
     ]
 }
 
-extension KnownLabel {
+public extension KnownLabel {
     /// The known textual representations for this item in the English language.
     static let knownLabelsEnglish: [KnownLabel: Set<String>] = [
         .nutritionFacts: ["nutrition facts"],
@@ -146,7 +146,7 @@ extension KnownLabel {
     }()
 }
 
-extension MeasurementUnit {
+public extension MeasurementUnit {
     /// Known spellings for this unit in English.
     static let knownSpellingsEnglish: [MeasurementUnit: Set<String>] = [
         .gram: ["gram", "grams", "g"],

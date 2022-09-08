@@ -5,7 +5,7 @@ import ImageIO
 import SwiftUI
 import Vision
 
-final class NutritionLabelDetector {
+public final class NutritionLabelDetector {
     /// The image to scan.
     let image: CGImage
     
@@ -16,14 +16,14 @@ final class NutritionLabelDetector {
     var nutritionLabelImage: CGImage?
     
     /// Default initializer.
-    init(image: CGImage) {
+    public init(image: CGImage) {
         self.image = image
         self.language = nil
         self.nutritionLabelImage = nil
     }
     
     /// Check whether or not an image contains a nutrition label.
-    func findNutritionLabel() async throws -> (CGImage, VNRectangleObservation)? {
+    public func findNutritionLabel() async throws -> (CGImage, VNRectangleObservation)? {
         if let result = try await self.findNutritionLabelPrimary() {
             return result
         }
@@ -166,8 +166,7 @@ final class NutritionLabelDetector {
     }
     
     /// Scans the nutrition label.
-    func scanNutritionLabel(_ addRectangle: Optional<(CGRect, Color) -> Void> = nil,
-                            _ addLine: Optional<(CGPoint, CGPoint) -> Void> = nil) async throws -> NutritionLabel {
+    public func scanNutritionLabel() async throws -> NutritionLabel {
         guard let language = self.language, let nutritionLabelImage = self.nutritionLabelImage else {
             throw "no nutrition label found"
         }
@@ -176,11 +175,6 @@ final class NutritionLabelDetector {
         let texts = try await textDetector.detect()
         
         let parser = HorizontalTabularNutritionLabelParser(rawDetectedText: texts, language: language)
-        
-        for text in parser.categorizedText {
-            print(text.description.debugDescription)
-        }
-        
         return parser.parse()
     }
     
@@ -201,9 +195,7 @@ final class NutritionLabelDetector {
     }
     
     /// Try to detect image rotation by tracing character lines and rotate the image accordingly.
-    private func rotateImage(image: CGImage,
-                             _ addRectangle: Optional<(CGRect, Color) -> Void> = nil,
-                             _ addLine: Optional<(CGPoint, CGPoint) -> Void> = nil) async throws -> CGImage {
+    private func rotateImage(image: CGImage) async throws -> CGImage {
         // Determine the image orientation based on detected characters
         let characterDetector = CharacterDetector(image: image, imageOrientation: .up)
         let characters = try await characterDetector.detect()
@@ -234,10 +226,6 @@ final class NutritionLabelDetector {
             
             let angle = line.signedAngle(to: .init(x: 1, y: 0))
             let roughAngle = Int(Angle(radians: angle).degrees)
-            
-#if true
-            addLine?(start, end)
-#endif
             
             characterAngles[roughAngle] = (characterAngles[roughAngle] ?? 0) + 1
         }
@@ -271,14 +259,6 @@ final class NutritionLabelDetector {
                 maxScoreAngle = i
             }
         }
-        
-        
-#if true
-        for c in (characterAngles.map { ($0.key, $0.value) }.sorted { $0.0 < $1.0 }) {
-            print("\(c.0): \(c.1)")
-        }
-        print(maxScoreAngle)
-#endif
         
         guard maxScore > 5, abs(maxScoreAngle) > 3 else {
             return image

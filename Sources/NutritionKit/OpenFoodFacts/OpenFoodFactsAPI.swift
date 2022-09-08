@@ -1,31 +1,34 @@
 
 import Foundation
 
-final class OpenFoodFactsAPI {
-    enum Error: Swift.Error {
+public final class OpenFoodFactsAPI {
+    public enum Error: Swift.Error {
         case invalidUrl
         case dataNotFound
         case decodingError
     }
     
-    enum ProductStatus: Int {
+    public enum ProductStatus: Int {
         case notFound = 0
         case found = 1
     }
     
-    enum ProductFields: String, CaseIterable {
+    public enum ProductFields: String, CaseIterable {
         // Metadata
         case productName = "product_name"
         
         // Nutrition info
         case energyKcal = "energy-kcal_value"
         case servingSize = "serving_size"
-        case nutrients = "nutriments" // ???
+        case nutrients = "nutriments"
     }
     
+    /// The product fields to use.
+    var productFields: [ProductFields]
+    
     /// Default initializer.
-    init() {
-        
+    public init() {
+        self.productFields = ProductFields.allCases
     }
     
     /// The base API URL.
@@ -33,6 +36,13 @@ final class OpenFoodFactsAPI {
     
     /// Shared instance.
     static let shared = OpenFoodFactsAPI()
+    
+    /// Update the API configuration.
+    public func configure(productFields: [ProductFields]? = nil) {
+        if let productFields {
+            self.productFields = productFields
+        }
+    }
     
     /// Load info about a food item with the given barcode.
     public func find(_ barcode: String) async throws -> FoodItem {
@@ -142,7 +152,7 @@ final class OpenFoodFactsAPI {
     
     /// Create the API URL for a given barcode.
     public func formApiUrl(_ barcode: String) -> String {
-        "\(Self.openFoodFactsApiUrl)/\(barcode)?fields=\(ProductFields.allCases.map { $0.rawValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! }.joined(separator: ","))"
+        "\(Self.openFoodFactsApiUrl)/\(barcode)?fields=\(productFields.map { $0.rawValue.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)! }.joined(separator: ","))"
     }
 }
 

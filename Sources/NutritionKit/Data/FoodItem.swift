@@ -1,7 +1,7 @@
 
 import Foundation
 
-struct FoodItem {
+public struct FoodItem {
     /// The name of this product.
     var productName: String?
     
@@ -16,13 +16,13 @@ extension FoodItem: Codable {
         case productName, nutrition
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(productName, forKey: .productName)
         try container.encode(nutrition, forKey: .nutrition)
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.init(
             productName: try container.decode(Optional<String>.self, forKey: .productName),
@@ -32,7 +32,7 @@ extension FoodItem: Codable {
 }
 
 extension FoodItem: Equatable {
-    static func ==(lhs: Self, rhs: Self) -> Bool {
+    public static func ==(lhs: Self, rhs: Self) -> Bool {
         return (
             lhs.productName == rhs.productName
             && lhs.nutrition == rhs.nutrition
@@ -41,7 +41,7 @@ extension FoodItem: Equatable {
 }
 
 extension FoodItem: Hashable {
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(productName)
         hasher.combine(nutrition)
     }

@@ -2,7 +2,7 @@
 import AppUtilities
 import Vision
 
-public struct CharacterDetector {
+struct CharacterDetector {
     /// The image in which text should be detected.
     let image: CGImage
     

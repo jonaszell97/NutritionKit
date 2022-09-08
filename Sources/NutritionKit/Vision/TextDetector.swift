@@ -2,7 +2,7 @@
 import AppUtilities
 import Vision
 
-public struct TextDetector {
+struct TextDetector {
     struct TextBox {
         /// The ID of this text detection.
         let id = UUID()

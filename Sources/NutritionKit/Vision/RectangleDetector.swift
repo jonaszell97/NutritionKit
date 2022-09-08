@@ -2,7 +2,7 @@
 import AppUtilities
 import Vision
 
-public struct RectangleDetector {
+struct RectangleDetector {
     /// The image in which a label should be detected.
     let image: CGImage
     

@@ -2,7 +2,7 @@
 import AppUtilities
 import Foundation
 
-enum NutritionAmount {
+public enum NutritionAmount {
     /// An unspecified unit.
     case unitless(value: Double)
     
@@ -19,7 +19,7 @@ enum NutritionAmount {
     case dailyValue(percentage: Int)
 }
 
-enum ServingSize {
+public enum ServingSize {
     /// A serving size determined by an absolute amount.
     case amount(amount: NutritionAmount)
     
@@ -30,7 +30,7 @@ enum ServingSize {
     case absoluteValue(value: Double, unit: String?)
 }
 
-enum MeasurementUnit: String, CaseIterable {
+public enum MeasurementUnit: String, CaseIterable {
     /// Solid units
     case gram
     case milligram
@@ -53,7 +53,7 @@ enum MeasurementUnit: String, CaseIterable {
 
 extension NutritionAmount: CustomStringConvertible {
     /// Create a nutrition amount from a unit and a value.
-    init(amount: Double, unit: MeasurementUnit) {
+    public init(amount: Double, unit: MeasurementUnit) {
         if unit.isSolid {
             self = .solid(milligrams: unit.normalizeValue(amount))
             return
@@ -77,7 +77,7 @@ extension NutritionAmount: CustomStringConvertible {
         self = .unitless(value: amount)
     }
     
-    var precedence: Int {
+    public var precedence: Int {
         switch self {
         case .energy:
             return 2
@@ -92,7 +92,7 @@ extension NutritionAmount: CustomStringConvertible {
         }
     }
     
-    var description: String {
+    public var description: String {
         switch self {
         case .unitless(let value):
             return "\(value)"
@@ -120,7 +120,7 @@ extension NutritionAmount: CustomStringConvertible {
         }
     }
     
-    func description(for fact: NutritionItem) -> String {
+    public func description(for fact: NutritionItem) -> String {
         switch self {
         case .unitless(let value):
             return "\(value)"
@@ -153,7 +153,7 @@ extension NutritionAmount: CustomStringConvertible {
     }
 }
 
-extension MeasurementUnit {
+public extension MeasurementUnit {
     /// Whether or not this unit represents a solid.
     var isSolid: Bool {
         switch self {
@@ -228,7 +228,7 @@ extension MeasurementUnit {
 }
 
 extension ServingSize: CustomStringConvertible {
-    var description: String {
+    public var description: String {
         switch self {
         case .amount(let amount):
             return amount.description
@@ -244,11 +244,11 @@ extension ServingSize: CustomStringConvertible {
 // MARK: Codable, Hashable
 
 extension NutritionAmount: Codable {
-    enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case unitless, energy, solid, liquid, dailyValue
     }
     
-    var codingKey: CodingKeys {
+    public var codingKey: CodingKeys {
         switch self {
         case .unitless: return .unitless
         case .energy: return .energy
@@ -258,7 +258,7 @@ extension NutritionAmount: Codable {
         }
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .unitless(let value):
@@ -274,7 +274,7 @@ extension NutritionAmount: Codable {
         }
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         switch container.allKeys.first {
         case .unitless:
@@ -304,7 +304,7 @@ extension NutritionAmount: Codable {
 }
 
 extension NutritionAmount: Equatable {
-    static func ==(lhs: NutritionAmount, rhs: NutritionAmount) -> Bool {
+    public static func ==(lhs: NutritionAmount, rhs: NutritionAmount) -> Bool {
         guard lhs.codingKey == rhs.codingKey else {
             return false
         }
@@ -332,7 +332,7 @@ extension NutritionAmount: Equatable {
 }
 
 extension NutritionAmount: Hashable {
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(self.codingKey.rawValue)
         switch self {
         case .unitless(let value):
@@ -350,11 +350,11 @@ extension NutritionAmount: Hashable {
 }
 
 extension ServingSize: Codable {
-    enum CodingKeys: String, CodingKey {
+    public enum CodingKeys: String, CodingKey {
         case amount, container, absoluteValue
     }
     
-    var codingKey: CodingKeys {
+    public var codingKey: CodingKeys {
         switch self {
         case .amount: return .amount
         case .container: return .container
@@ -362,7 +362,7 @@ extension ServingSize: Codable {
         }
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
         case .amount(let amount):
@@ -374,7 +374,7 @@ extension ServingSize: Codable {
         }
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         switch container.allKeys.first {
         case .amount:
@@ -398,7 +398,7 @@ extension ServingSize: Codable {
 }
 
 extension ServingSize: Equatable {
-    static func ==(lhs: ServingSize, rhs: ServingSize) -> Bool {
+    public static func ==(lhs: ServingSize, rhs: ServingSize) -> Bool {
         guard lhs.codingKey == rhs.codingKey else {
             return false
         }
@@ -421,7 +421,7 @@ extension ServingSize: Equatable {
 }
 
 extension ServingSize: Hashable {
-    func hash(into hasher: inout Hasher) {
+    public func hash(into hasher: inout Hasher) {
         hasher.combine(self.codingKey.rawValue)
         switch self {
         case .amount(let amount):
