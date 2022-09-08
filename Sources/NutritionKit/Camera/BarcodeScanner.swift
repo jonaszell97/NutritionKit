@@ -17,10 +17,10 @@ public struct BarcodeScannerView: View {
     @Binding var barcodeData: Barcode?
     
     /// The cutout rectangle.
-    @State var rectangleCutoutTopLeft: CGPoint = .zero
-    @State var rectangleCutoutTopRight: CGPoint = .zero
-    @State var rectangleCutoutBottomLeft: CGPoint = .zero
-    @State var rectangleCutoutBottomRight: CGPoint = .zero
+    @State var rectangleCutoutTopLeft: CGPoint = Self.defaultBarcodeCutoutRect.topLeft
+    @State var rectangleCutoutTopRight: CGPoint = Self.defaultBarcodeCutoutRect.topRight
+    @State var rectangleCutoutBottomLeft: CGPoint = Self.defaultBarcodeCutoutRect.bottomLeft
+    @State var rectangleCutoutBottomRight: CGPoint = Self.defaultBarcodeCutoutRect.bottomRight
     
     /// The default cutout rect.
     static let defaultBarcodeCutoutRect = (
@@ -32,10 +32,6 @@ public struct BarcodeScannerView: View {
     
     public init(barcodeData: Binding<Barcode?>) {
         self._barcodeData = barcodeData
-        self.rectangleCutoutTopLeft = Self.defaultBarcodeCutoutRect.topLeft
-        self.rectangleCutoutTopRight = Self.defaultBarcodeCutoutRect.topRight
-        self.rectangleCutoutBottomLeft = Self.defaultBarcodeCutoutRect.bottomLeft
-        self.rectangleCutoutBottomRight = Self.defaultBarcodeCutoutRect.bottomRight
     }
     
     func resetCameraCutout() {
