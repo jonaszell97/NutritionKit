@@ -139,29 +139,30 @@ internal struct AnyCameraView<Content: View>: View {
     }
 }
 
-struct CameraCutoutShape: Shape, Animatable {
-    var topLeft: CGPoint
-    var topRight: CGPoint
-    var bottomLeft: CGPoint
-    var bottomRight: CGPoint
+public typealias CameraRect = AnimatableTuple4<CGPoint, CGPoint, CGPoint, CGPoint>
+
+public struct CameraCutoutShape: Shape, Animatable {
+    var points: CameraRect
     
-    var animatableData: AnimatableTuple4<CGPoint, CGPoint, CGPoint, CGPoint> {
+    public var animatableData: CameraRect {
         get {
-            .init(topLeft, topRight, bottomLeft, bottomRight)
+            points
         }
         set {
-            topLeft = newValue.first
-            topRight = newValue.second
-            bottomLeft = newValue.third
-            bottomRight = newValue.fourth
+            points = newValue
         }
     }
     
-    func path(in rect: CGRect) -> Path {
+    public func path(in rect: CGRect) -> Path {
         var path = Path()
         
         path.addRect(rect)
         path.closeSubpath()
+        
+        let topLeft = points.first
+        let topRight = points.second
+        let bottomLeft = points.third
+        let bottomRight = points.fourth
         
         path.move(to: .init(x: topLeft.x * rect.width, y: rect.height - topLeft.y * rect.height))
         path.addLine(to: .init(x: topRight.x * rect.width, y: rect.height - topRight.y * rect.height))
@@ -175,32 +176,31 @@ struct CameraCutoutShape: Shape, Animatable {
     }
 }
 
-struct CameraCutoutStrokeShape: Shape, Animatable {
+public struct CameraCutoutStrokeShape: Shape, Animatable {
     let lineLength: CGFloat
-    var topLeft: CGPoint
-    var topRight: CGPoint
-    var bottomLeft: CGPoint
-    var bottomRight: CGPoint
+    var points: CameraRect
     
-    var animatableData: AnimatableTuple4<CGPoint, CGPoint, CGPoint, CGPoint> {
+    public var animatableData: CameraRect {
         get {
-            .init(topLeft, topRight, bottomLeft, bottomRight)
+            points
         }
         set {
-            topLeft = newValue.first
-            topRight = newValue.second
-            bottomLeft = newValue.third
-            bottomRight = newValue.fourth
+            points = newValue
         }
     }
     
-    func path(in rect: CGRect) -> Path {
+    public func path(in rect: CGRect) -> Path {
         var path = Path()
         
-        let topLeft = CGPoint(x: self.topLeft.x * rect.width, y: rect.height - self.topLeft.y * rect.height)
-        let topRight = CGPoint(x: self.topRight.x * rect.width, y: rect.height - self.topRight.y * rect.height)
-        let bottomLeft = CGPoint(x: self.bottomLeft.x * rect.width, y: rect.height - self.bottomLeft.y * rect.height)
-        let bottomRight = CGPoint(x: self.bottomRight.x * rect.width, y: rect.height - self.bottomRight.y * rect.height)
+        var topLeft = points.first
+        var topRight = points.second
+        var bottomLeft = points.third
+        var bottomRight = points.fourth
+        
+        topLeft = CGPoint(x: topLeft.x * rect.width, y: rect.height - topLeft.y * rect.height)
+        topRight = CGPoint(x: topRight.x * rect.width, y: rect.height - topRight.y * rect.height)
+        bottomLeft = CGPoint(x: bottomLeft.x * rect.width, y: rect.height - bottomLeft.y * rect.height)
+        bottomRight = CGPoint(x: bottomRight.x * rect.width, y: rect.height - bottomRight.y * rect.height)
         
         // Top Left
         path.move(to: topLeft)
@@ -231,5 +231,37 @@ struct CameraCutoutStrokeShape: Shape, Animatable {
         path.addLine(to: bottomRight + (bottomLeft - bottomRight).normalized * lineLength)
         
         return path
+    }
+}
+
+public struct DefaultCameraOverlayView: View {
+    /// The current corner points.
+    @Binding var rectangle: CameraRect
+    
+    /// The default cutout rect for barcode scanning.
+    static let defaultBarcodeCutoutRect: CameraRect = .init(
+        CGPoint(x: 0.15, y: 0.6),
+        CGPoint(x: 0.85, y: 0.6),
+        CGPoint(x: 0.15, y: 0.4),
+        CGPoint(x: 0.85, y: 0.4)
+    )
+    
+    /// The default cutout rect for nutrition label scanning.
+    static let defaultLabelCutoutRect: CameraRect = .init(
+        CGPoint(x: 0.15, y: 0.8),
+        CGPoint(x: 0.85, y: 0.8),
+        CGPoint(x: 0.15, y: 0.2),
+        CGPoint(x: 0.85, y: 0.2)
+    )
+    
+    public var body: some View {
+        ZStack {
+            CameraCutoutShape(points: rectangle)
+                .fill(Color.black, style: .init(eoFill: true))
+                .opacity(0.4)
+            
+            CameraCutoutStrokeShape(lineLength: 15, points: rectangle)
+                .stroke(Color.white, style: .init(lineWidth: 5, lineCap: .round))
+        }
     }
 }

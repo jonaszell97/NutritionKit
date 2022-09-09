@@ -29,6 +29,10 @@ let package = Package(
             ]),
         .testTarget(
             name: "NutritionKitTests",
-            dependencies: ["NutritionKit"]),
+            dependencies: ["NutritionKit"],
+            resources: [
+                .process("TestAssets.xcassets")
+            ]
+        ),
     ]
 )

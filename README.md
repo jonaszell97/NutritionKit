@@ -31,3 +31,22 @@ api.configure(productFields: [.productName, .servingSize])
 #
 
 ## Barcode Scanning
+
+NutritionKit provides a SwiftUI view for scanning generic barcodes, `BarcodeScannerView`. To use this view, you must set the value `Privacy - Camera Usage Description` in your app's `Info.plist`.
+
+By itself `BarcodeScannerView` only shows the live camera feed with no overlay or other info. You can provide more information yourself by embedding it in a `ZStack` or in another view.
+
+```swift
+import NutritionKit
+
+struct ContentView: View {
+    @State var barcodeData: Barcode? = nil
+
+    var body: some View {
+        BarcodeScannerView(barcodeData: $barcodeData)
+            .onChange(of: barcodeData) { data in
+                // A barcode was detected in the camera feed
+            }
+    }
+}
+```
