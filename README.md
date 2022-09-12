@@ -1,6 +1,6 @@
 # NutritionKit
 
-This library provides useful functionality for food and nutrition apps, including:
+This library provides useful functionality for food and nutrition apps in SwiftUI, including:
 
 - Integration with the *OpenFoodFacts* database
 - Barcode scanning
@@ -50,3 +50,34 @@ struct ContentView: View {
     }
 }
 ```
+
+## Nutrition Label Scanning
+
+NutritionKit can detect and parse nutrition labels. Currently, only English and German labels are supported. Nutrition labels are scanned similarly to barcodes with the `NutritionLabelScannerView`.
+
+```swift
+import NutritionKit
+
+struct ContentView: View {
+    @State var nutritionLabel: NutritionLabel? = nil
+
+    var body: some View {
+        NutritionLabelScannerView(nutritionLabel: $nutritionLabel)
+            .onChange(of: nutritionLabel) { data in
+                // A nutrition label was detected in the camera feed
+            }
+    }
+}
+```
+
+Currently, the following information can be detected:
+
+- Serving size
+- Calories, calories from fat
+- Fat, saturated fat, unsaturated fat, trans fat, omega-3 fatty acids
+- Carbohyrates, sugar, added sugar, starch, sugar alcohols, dietary fiber
+- Protein
+- Salt, Sodium, Cholesterol
+- Vitamins A, B1, B2, B6, B9, B12, C, DE, E, K
+- Caffeine, Taurine, Alcohol
+- Magnesium, Calcium, Zinc, Potassium, Iron, Fluoride, Copper, Chloride, Phosphorus, Iodine, Chromium 
