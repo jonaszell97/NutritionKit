@@ -1,3 +1,5 @@
+<img style="height:100px;width:100px;border-radius:25px;" src="./Assets/logo.png" />
+
 # NutritionKit
 
 This library provides useful functionality for food and nutrition apps in SwiftUI, including:
