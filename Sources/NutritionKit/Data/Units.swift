@@ -1,6 +1,6 @@
 
-import AppUtilities
 import Foundation
+import Toolbox
 
 public enum NutritionAmount {
     /// An unspecified unit.
@@ -128,7 +128,7 @@ extension NutritionAmount: CustomStringConvertible {
             return "\(Int(kcal)) kcal"
         case .solid(let milligrams):
             if case .macronutrient = fact.category, milligrams >= 100 {
-                return "\(Format.format(milligrams/1000, decimalPlaces: 1, minDecimalPlaces: 0))g"
+                return "\(FormatToolbox.format(milligrams/1000, decimalPlaces: 1, minDecimalPlaces: 0))g"
             }
             
             if milligrams < 1 && milligrams != 0 {

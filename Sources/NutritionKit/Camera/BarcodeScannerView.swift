@@ -1,6 +1,6 @@
 
-import AppUtilities
 import SwiftUI
+import Toolbox
 
 public struct Barcode: Codable, Hashable {
     /// The barcode data.

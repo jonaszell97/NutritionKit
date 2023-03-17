@@ -1,7 +1,7 @@
 
-import AppUtilities
 import Foundation
 import SwiftUI
+import Toolbox
 
 enum NutritionLabelStructure {
     /// The label has a tabular structure with values to the right of labels.

@@ -1,8 +1,9 @@
 
-import AppUtilities
 import AVFoundation
 import Combine
+import Panorama
 import SwiftUI
+import Toolbox
 
 internal final class CameraViewController: UIViewController, NutritionCameraDelegate {
     let onBarcodeRead: Optional<(String, [CGPoint]) -> Void>
@@ -263,5 +264,88 @@ public struct DefaultCameraOverlayView: View {
             CameraCutoutStrokeShape(lineLength: 15, points: rectangle)
                 .stroke(Color.white, style: .init(lineWidth: 5, lineCap: .round))
         }
+    }
+}
+
+internal extension UIScreen {
+    var orientation: UIInterfaceOrientation {
+        let point = coordinateSpace.convert(CGPoint.zero, to: fixedCoordinateSpace)
+        switch (point.x, point.y) {
+        case (0, 0):
+            return .portrait
+        case let (x, y) where x != 0 && y != 0:
+            return .portraitUpsideDown
+        case let (0, y) where y != 0:
+            return .landscapeLeft
+        case let (x, 0) where x != 0:
+            return .landscapeRight
+        default:
+            return .unknown
+        }
+    }
+}
+
+internal extension UIImage {
+    convenience init?(pixelBuffer: CVPixelBuffer) {
+        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+        let context = CIContext()
+        let cgImage = context.createCGImage(ciImage, from: CGRect(x: 0, y: 0,
+                                                                  width: CVPixelBufferGetWidth(pixelBuffer),
+                                                                  height: CVPixelBufferGetHeight(pixelBuffer)))
+        
+        guard let cgImage else {
+            return nil
+        }
+        
+        self.init(cgImage: cgImage)
+    }
+    
+    func rotate(radians: Float) -> UIImage? {
+        var newSize = CGRect(origin: CGPoint.zero, size: self.size).applying(CGAffineTransform(rotationAngle: CGFloat(radians))).size
+        // Trim off the extremely small float value to prevent core graphics from rounding it up
+        newSize.width = floor(newSize.width)
+        newSize.height = floor(newSize.height)
+        
+        UIGraphicsBeginImageContextWithOptions(newSize, false, self.scale)
+        let context = UIGraphicsGetCurrentContext()!
+        
+        // Move origin to middle
+        context.translateBy(x: newSize.width/2, y: newSize.height/2)
+        // Rotate around middle
+        context.rotate(by: CGFloat(radians))
+        // Draw the image at its center
+        self.draw(in: CGRect(x: -self.size.width/2, y: -self.size.height/2, width: self.size.width, height: self.size.height))
+        
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage
+    }
+    
+    /// Create a snapshot of this frame with the correct orientation.
+    static func rotateSnapshotImage(from rawPhoto: UIImage) -> UIImage? {
+        let rotationAngleDegrees: Float?
+        switch UIScreen.main.orientation {
+        case .portrait:
+            rotationAngleDegrees = 90
+        case .portraitUpsideDown:
+            rotationAngleDegrees = -90
+        case .landscapeLeft:
+            rotationAngleDegrees = 180
+        case .landscapeRight:
+            rotationAngleDegrees = nil
+        default:
+            rotationAngleDegrees = nil
+        }
+        
+        let finalPhoto: UIImage
+        if let rotationAngleDegrees = rotationAngleDegrees {
+            finalPhoto = rawPhoto.rotate(radians: rotationAngleDegrees * .deg2rad)!
+        }
+        else {
+            finalPhoto = rawPhoto
+        }
+        
+        return finalPhoto
     }
 }

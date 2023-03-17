@@ -1,8 +1,9 @@
 
-import AppUtilities
 import Foundation
 import ImageIO
+import Panorama
 import SwiftUI
+import Toolbox
 import Vision
 
 public final class NutritionLabelDetector {
@@ -332,7 +333,7 @@ public final class NutritionLabelDetector {
         let xs = charactersOnLine.map { Double($0.center.x) }
         let ys = charactersOnLine.map { Double($0.center.y) }
         
-        let regressor = linearRegression(xs, ys)
+        let regressor = StatsUtilities.linearRegression(xs, ys)
         
         let startY = regressor(Double(charactersOnLine.first!.center.x))
         let endY = regressor(Double(charactersOnLine.last!.center.x))

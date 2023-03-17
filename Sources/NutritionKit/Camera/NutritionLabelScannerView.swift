@@ -1,6 +1,7 @@
 
-import AppUtilities
+import Panorama
 import SwiftUI
+import Toolbox
 
 public struct NutritionLabelScannerView: View {
     /// The scanned nutrition label.
@@ -40,17 +41,8 @@ public struct NutritionLabelScannerView: View {
         
         self.isProcessingImage = true
         
-        let copy = buffer.copy()
+        // TODO: Add blur detection
         Task {
-            let score = try await BlurDetector().processImage(copy)
-            guard score >= self.minBlurScore else {
-                DispatchQueue.main.async {
-                    self.reset()
-                }
-                
-                return
-            }
-            
             await self.processCapturedImage(cgImage)
         }
     }

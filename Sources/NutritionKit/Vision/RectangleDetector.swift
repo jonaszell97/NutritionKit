@@ -1,5 +1,5 @@
 
-import AppUtilities
+import Toolbox
 import Vision
 
 struct RectangleDetector {

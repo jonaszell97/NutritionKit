@@ -1,6 +1,6 @@
 
-import AppUtilities
 import Vision
+import Toolbox
 
 struct CharacterDetector {
     /// The image in which text should be detected.
